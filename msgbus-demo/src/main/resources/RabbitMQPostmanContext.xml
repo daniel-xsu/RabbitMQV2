@@ -1,0 +1,18 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="RabbitMQConnectionContext.xml" />
+
+    <bean id="listener" class="com.hp.it.msgbus.biz.CustomizedLetterListenerImpl"/>
+    <bean id="postman" class="com.hp.it.messagebus.postman.Postman" init-method="init" >
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="channelCacheSize" value="10" />
+        <property name="maxConcurrentConsumers" value="10"/>
+        <property name="concurrentConsumers" value="5" />
+        <property name="mailboxName" value="com.hp.it.daniel" />
+        <property name="listener" ref="listener" />
+    </bean>
+
+</beans>

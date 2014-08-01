@@ -1,0 +1,54 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="RabbitMQConnectionContext.xml" />
+
+    <rabbit:queue name="com.hp.it.daniel.inQueue"/>
+    <rabbit:queue name="com.hp.it.jackie.inQueue"/>
+    <rabbit:queue name="com.hp.it.sems.order.inQueue"/>
+
+    <rabbit:topic-exchange name="com.hp.it.daniel.outExchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="com.hp.it.daniel.inQueue" pattern="*"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+    <rabbit:topic-exchange name="com.hp.it.jackie.outExchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="com.hp.it.jackie.inQueue" pattern="*"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+    <rabbit:topic-exchange name="com.hp.it.sems.order.outExchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="com.hp.it.sems.order.inQueue" pattern="*"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <rabbit:template id="com.hp.it.daniel.outboxTemplate" connection-factory="connectionFactory"
+                     exchange="com.hp.it.daniel.outExchange" routing-key="*"/>
+    <rabbit:template id="com.hp.it.jackie.outboxTemplate" connection-factory="connectionFactory"
+                     exchange="com.hp.it.jackie.outExchange" routing-key="*"/>
+    <rabbit:template id="com.hp.it.sems.order.outboxTemplate" connection-factory="connectionFactory"
+                     exchange="com.hp.it.sems.order.outExchange" routing-key="*"/>
+
+
+    <bean id="mailboxBook" class="com.hp.it.messagebus.mailer.MailboxBook" >
+        <property name="mailboxBookMapping" >
+            <map>
+            <entry key="com.hp.it.daniel" value-ref="com.hp.it.daniel.outboxTemplate" />
+            <entry key="com.hp.it.jackie" value-ref="com.hp.it.jackie.outboxTemplate" />
+            <entry key="com.hp.it.sems" value-ref="com.hp.it.sems.order.outboxTemplate" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="postOfficeYellowPage" class="com.hp.it.messagebus.mailer.PostOfficeYellowPage" >
+        <property name="mailboxBook" ref="mailboxBook" />
+    </bean>
+
+
+</beans>

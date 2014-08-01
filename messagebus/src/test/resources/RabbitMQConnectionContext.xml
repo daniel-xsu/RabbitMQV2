@@ -1,0 +1,14 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--<rabbit:connection-factory id="connectionFactory" host="c0046099.itcs.hp.com"/>-->
+    <rabbit:connection-factory id="connectionFactory" host="127.0.0.1"/>
+    <!--<rabbit:connection-factory id="connectionFactory" host="c0047319.itcs.hp.com" username="dscdc" password="dscdc" virtual-host="/sems" />-->
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+</beans>
